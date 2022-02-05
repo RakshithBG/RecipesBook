@@ -9,6 +9,117 @@ const Recipe = require("../models/Recipe");
 const messages = require("../models/messages");
 const feedback = require("../models/feedback");
 
+exports.submitRecipeOnPost = async (req, res) => {
+  try {
+    let imageUploadFile;
+    let uploadPath;
+    let newImageName;
+
+    if (!req.files || Object.keys(req.files).length === 0) {
+      console.log("No Files where uploaded.");
+    } else {
+      imageUploadFile = req.files.image;
+      newImageName = Date.now() + imageUploadFile.name;
+
+      uploadPath =
+        require("path").resolve("./") + "/public/uploads/" + newImageName;
+
+      imageUploadFile.mv(uploadPath, function (err) {
+        if (err) return res.status(500).send(err);
+      });
+    }
+    const recipe = req.body.name.toLowerCase();
+    // console.log(recipe);
+    let recipename = await Recipe.find({
+      name: recipe,
+    });
+
+    if (recipename.length == 0) {
+      const newRecipe = new Recipe({
+        name: req.body.name.toLowerCase(),
+        description: req.body.description,
+        email: req.body.email,
+        ingredients: req.body.ingredients,
+        category: req.body.category,
+        image: newImageName,
+      });
+      const message = req.body.email + " added " + req.body.name;
+      const newMessage = new messages({
+        message: message,
+      });
+      await newRecipe.save();
+      await newMessage.save();
+
+      req.flash("infoSubmit", "Recipe has been added.");
+      res.redirect("/submit-recipe");
+    } else if (recipename.length > 0) {
+      req.flash(
+        "infoSubmit",
+        "Duplicate Recipe name , recipe already present !!!."
+      );
+      res.redirect("/submit-recipe");
+    }
+  } catch (error) {
+    // console.log(error);
+    // const k = 1;
+    req.flash("infoSubmit", "eror at subtmitting recipe");
+    res.redirect("/submit-recipe");
+  }
+};
+
+exports.adminsubmitRecipeOnPost = async (req, res) => {
+  try {
+    let imageUploadFile;
+    let uploadPath;
+    let newImageName;
+
+    if (!req.files || Object.keys(req.files).length === 0) {
+      console.log("No Files where uploaded.");
+    } else {
+      imageUploadFile = req.files.image;
+      newImageName = Date.now() + imageUploadFile.name;
+
+      uploadPath =
+        require("path").resolve("./") + "/public/uploads/" + newImageName;
+
+      imageUploadFile.mv(uploadPath, function (err) {
+        if (err) return res.status(500).send(err);
+      });
+    }
+    const recipe = req.body.name.toLowerCase();
+    // console.log(recipe);
+    let recipename = await Recipe.find({
+      name: recipe,
+    });
+
+    if (recipename.length == 0) {
+      const newRecipe = new Recipe({
+        name: req.body.name,
+        description: req.body.description,
+        email: req.body.email,
+        ingredients: req.body.ingredients,
+        category: req.body.category,
+        image: newImageName,
+      });
+
+      await newRecipe.save();
+
+      req.flash("infoSubmit", "Recipe has been added.");
+      res.redirect("/adminsubmitrecipe");
+    } else if (recipename.length > 0) {
+      req.flash(
+        "infoSubmit",
+        "Duplicate Recipe name , recipe already present !!!."
+      );
+      res.redirect("/adminsubmitrecipe");
+    }
+  } catch (error) {
+    // const k = 1;
+    req.flash("infoSubmit", "Don't Enter The Duplicate Recipename");
+    res.redirect("/adminsubmitrecipe");
+  }
+};
+
 exports.deleteCategory = async (req, res) => {
   try {
     let categoryId = req.params.id;
@@ -47,10 +158,10 @@ exports.userfeedbacks = async (req, res) => {
 exports.postfeedback = async (req, res) => {
   const name = req.body.name;
   const user = await Recipe.find({
-    $text: { $search: name, $caseSensitive: false },
+    $text: { $search: name, $diacriticSensitive: false },
   });
 
-  console.log(user);
+  // console.log(user);
   // db.articles.find( { $text: { $search: "coffee",$caseSensitive :true } } )
   if (user.length == 1) {
     const newfeedback = new feedback({
@@ -109,57 +220,6 @@ exports.newmessages = async (req, res) => {
     });
   } catch (error) {
     res.status(500).send({ message: error.message || "Error Occured" });
-  }
-};
-
-exports.submitRecipeOnPost = async (req, res) => {
-  try {
-    let imageUploadFile;
-    let uploadPath;
-    let newImageName;
-
-    if (!req.files || Object.keys(req.files).length === 0) {
-      console.log("No Files where uploaded.");
-    } else {
-      imageUploadFile = req.files.image;
-      newImageName = Date.now() + imageUploadFile.name;
-
-      uploadPath =
-        require("path").resolve("./") + "/public/uploads/" + newImageName;
-
-      imageUploadFile.mv(uploadPath, function (err) {
-        if (err) return res.status(500).send(err);
-      });
-    }
-    const recipe = req.body.name;
-    let recipename = await Recipe.find({
-      $text: { $search: recipe, $caseSensitive: false },
-    });
-    if (recipename.length == 1) {
-      res.redirect("/submit-recipe");
-    } else {
-      const newRecipe = new Recipe({
-        name: req.body.name,
-        description: req.body.description,
-        email: req.body.email,
-        ingredients: req.body.ingredients,
-        category: req.body.category,
-        image: newImageName,
-      });
-      const message = req.body.email + " added " + req.body.name;
-      const newMessage = new messages({
-        message: message,
-      });
-
-      await newRecipe.save();
-      await newMessage.save();
-      req.flash("infoSubmit", "Recipe has been added.");
-      res.redirect("/submit-recipe");
-    }
-  } catch (error) {
-    // const k = 1;
-    req.flash("infoSubmit", "Don't Enter The Duplicate Recipename");
-    res.redirect("/submit-recipe");
   }
 };
 
@@ -506,53 +566,6 @@ exports.adminLog = async (req, res) => {
  * POST /submit-recipe
  * Submit Recipe
  */
-
-exports.adminsubmitRecipeOnPost = async (req, res) => {
-  try {
-    let imageUploadFile;
-    let uploadPath;
-    let newImageName;
-
-    if (!req.files || Object.keys(req.files).length === 0) {
-      console.log("No Files where uploaded.");
-    } else {
-      imageUploadFile = req.files.image;
-      newImageName = Date.now() + imageUploadFile.name;
-
-      uploadPath =
-        require("path").resolve("./") + "/public/uploads/" + newImageName;
-
-      imageUploadFile.mv(uploadPath, function (err) {
-        if (err) return res.status(500).send(err);
-      });
-    }
-    const recipe = req.body.name;
-    let recipename = await Recipe.find({
-      $text: { $search: recipe, $caseSensitive: false },
-    });
-    if (recipename.length == 1) {
-      res.redirect("/adminsubmitrecipe");
-    } else {
-      const newRecipe = new Recipe({
-        name: req.body.name,
-        description: req.body.description,
-        email: req.body.email,
-        ingredients: req.body.ingredients,
-        category: req.body.category,
-        image: newImageName,
-      });
-
-      await newRecipe.save();
-
-      req.flash("infoSubmit", "Recipe has been added.");
-      res.redirect("/adminsubmitrecipe");
-    }
-  } catch (error) {
-    // const k = 1;
-    req.flash("infoSubmit", "Don't Enter The Duplicate Recipename");
-    res.redirect("/adminsubmitrecipe");
-  }
-};
 
 // Delete Recipe
 // exports.recasync function deleteRecipe(){

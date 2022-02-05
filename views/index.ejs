@@ -18,7 +18,11 @@
 </div>
 
 <!-- Categories Start -->
-
+<section>
+  <div>
+    <a href="/login" class="btn btn-primary btn-dark btn-lg">Login</a>
+  </div>
+</section>
 <div class="row row-cols-2 row-cols-lg-6 g-2 g-lg-3 py-4">
   <% if(categories != '') { %> <% categories.forEach(function(category, index) {
   %>
@@ -152,51 +156,25 @@
     <% } %>
   </div>
 </section>
-<div>
-  <!-- American End -->
-  <section class="px-4 py-5 my-5 text-center">
-    <!-- <img src="/img/publish-recipe.png" class="d-block mx-auto mb-4 img-fluid" alt="Publish your recipe for FREE today" width="566" height="208" loading="lazy">
+
+<!-- American End -->
+
+<!-- Submit - Start -->
+<section>
+  <!-- <img src="/img/publish-recipe.png" class="d-block mx-auto mb-4 img-fluid" alt="Publish your recipe for FREE today" width="566" height="208" loading="lazy">
   <h1 class="display-5 fw-bold">Publish your recipe for FREE today</h1>
   <div class="col-lg-6 mx-auto">
     <p class="lead mb-4">Publish your Recipe in front of thousands of people for free.</p> -->
-    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-      <a href="/login" class="btn btn-primary btn-dark btn-lg">Login</a>
-    </div>
-  </section>
-  <!-- Submit - Start -->
-  <section class="px-4 py-5 my-5 text-center">
-    <!-- <img src="/img/publish-recipe.png" class="d-block mx-auto mb-4 img-fluid" alt="Publish your recipe for FREE today" width="566" height="208" loading="lazy">
-  <h1 class="display-5 fw-bold">Publish your recipe for FREE today</h1>
-  <div class="col-lg-6 mx-auto">
-    <p class="lead mb-4">Publish your Recipe in front of thousands of people for free.</p> -->
-    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-      <a href="/submit-recipe" class="btn btn-primary btn-dark btn-lg"
-        >Submit Recipe</a
-      >
-    </div>
-  </section>
-  <section>
-    <div>
-      <a
-        href="/feedback"
-        style="
-          text-decoration: none;
-          width: 130px;
-          color: white;
-          height: 50px;
-          border-radius: 15px;
-          float: right;
-          font-size: 20px;
-          margin-bottom: 10px;
-          /* background-image: linear-gradient(to right, pink, yellow); */
-          background-color: black;
-          padding: 9px;
-          padding-left: 17px;
-        "
-        >Feedback</a
-      >
-    </div>
-  </section>
-</div>
+  <div class="d-grid gap-1 d-sm-flex justify-content-sm-center">
+    <a href="/submit-recipe" class="btn btn-primary btn-dark btn-lg"
+      >Submit Recipe</a
+    >
+  </div>
+</section>
+<section class="px-4 py-5 my-5 text-center">
+  <div>
+    <a href="/feedback" class="btn btn-primary btn-dark btn-lg">feedback</a>
+  </div>
+</section>
 
 <!-- Submit - End -->
